@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main() {
+    int n, i, j;
+    float price[50], key;
+
+    printf("Enter number of products: ");
+    scanf("%d", &n);
+
+    printf("Enter %d product prices:\n", n);
+    for (i = 0; i < n; i++)
+        scanf("%f", &price[i]);
+
+    // Insertion Sort
+    for (i = 1; i < n; i++) {
+        key = price[i];
+        j = i - 1;
+        while (j >= 0 && price[j] > key) {
+            price[j + 1] = price[j];
+            j--;
+        }
+        price[j + 1] = key;
+    }
+
+    printf("\nPrices in ascending order:\n");
+    for (i = 0; i < n; i++)
+        printf("%.2f ", price[i]);
+    printf("\n");
+
+    return 0;
+}
