@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// structure for each line
+struct Line {
+    char text[100];
+    struct Line *next;
+};
+
+// function to create a new line node
+struct Line* createLine(char text[]) {
+    struct Line* newLine = (struct Line*)malloc(sizeof(struct Line));
+    strcpy(newLine->text, text);
+    newLine->next = NULL;
+    return newLine;
+}
+
+// insert line at specific position
+void insertLine(struct Line **head, char text[], int position) {
+    struct Line *newLine = createLine(text);
+    struct Line *temp = *head;
+
+    if (position == 1 || *head == NULL) {
+        newLine->next = *head;
+        *head = newLine;
+        return;
+    }
+
+    for (int i = 1; i < position - 1 && temp->next != NULL; i++)
+        temp = temp->next;
+
+    newLine->next = temp->next;
+    temp->next = newLine;
+}
+
+// delete line at specific position
+void deleteLine(struct Line **head, int position) {
+    if (*head == NULL) {
+        printf("No lines to delete.\n");
+        return;
+    }
+
+    struct Line *temp = *head;
+
+    if (position == 1) {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+
+    struct Line *prev = NULL;
+    for (int i = 1; i < position && temp != NULL; i++) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Invalid position!\n");
+        return;
+    }
+
+    prev->next = temp->next;
+    free(temp);
+}
+
+// display text normally
+void display(struct Line *head) {
+    if (head == NULL) {
+        printf("No text available.\n");
+        return;
+    }
+
+    struct Line *temp = head;
+    int line = 1;
+    while (temp != NULL) {
+        printf("%d: %s\n", line++, temp->text);
+        temp = temp->next;
+    }
+}
+
+// display text in reverse (using recursion)
+void displayReverse(struct Line *head) {
+    if (head == NULL)
+        return;
+    displayReverse(head->next);
+    printf("%s\n", head->text);
+}
+
+int main() {
+    struct Line *head = NULL;
+    int choice, pos;
+    char text[100];
+
+    do {
+        printf("\n--- SIMPLE TEXT EDITOR ---\n");
+        printf("1. Insert Line\n");
+        printf("2. Delete Line\n");
+        printf("3. Display Text\n");
+        printf("4. Display Reverse\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear newline
+
+        switch (choice) {
+            case 1:
+                printf("Enter line text: ");
+                fgets(text, sizeof(text), stdin);
+                text[strcspn(text, "\n")] = '\0'; // remove newline
+                printf("Enter position to insert: ");
+                scanf("%d", &pos);
+                insertLine(&head, text, pos);
+                break;
+
+            case 2:
+                printf("Enter position to delete: ");
+                scanf("%d", &pos);
+                deleteLine(&head, pos);
+                break;
+
+            case 3:
+                printf("\n--- Text (Normal Order) ---\n");
+                display(head);
+                break;
+
+            case 4:
+                printf("\n--- Text (Reverse Order) ---\n");
+                displayReverse(head);
+                break;
+
+            case 5:
+                printf("Exiting editor...\n");
+                break;
+
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
