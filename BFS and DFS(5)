@@ -1,0 +1,78 @@
+#include <stdio.h>
+
+#define MAX 10   // maximum number of rooms or nodes
+
+int adj[MAX][MAX];   // adjacency matrix
+int visited[MAX];
+int n;               // number of rooms (nodes)
+
+// ---------- Depth First Search (DFS) ----------
+void DFS(int v) {
+    int i;
+    visited[v] = 1;
+    printf("%d ", v);   // visit the node (print it)
+
+    for (i = 0; i < n; i++) {
+        if (adj[v][i] == 1 && !visited[i]) {
+            DFS(i);
+        }
+    }
+}
+
+// ---------- Breadth First Search (BFS) ----------
+void BFS(int start) {
+    int queue[MAX], front = 0, rear = 0;
+    int i, v;
+
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    visited[start] = 1;
+    queue[rear++] = start;
+
+    printf("%d ", start);
+
+    while (front < rear) {
+        v = queue[front++];
+        for (i = 0; i < n; i++) {
+            if (adj[v][i] == 1 && !visited[i]) {
+                printf("%d ", i);
+                visited[i] = 1;
+                queue[rear++] = i;
+            }
+        }
+    }
+}
+
+// ---------- Main Function ----------
+int main() {
+    int i, j, start;
+
+    printf("Enter number of rooms (nodes): ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix (use 1 for connected, 0 for not connected):\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &adj[i][j]);
+        }
+    }
+
+    printf("Enter starting room (0 to %d): ", n - 1);
+    scanf("%d", &start);
+
+    // ---------- DFS ----------
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    printf("\nDepth First Search (DFS) starting from room %d:\n", start);
+    DFS(start);
+
+    // ---------- BFS ----------
+    printf("\n\nBreadth First Search (BFS) starting from room %d:\n", start);
+    BFS(start);
+
+    printf("\n");
+
+    return 0;
+}
