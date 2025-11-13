@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main() {
+    int n;
+    float price[50], temp;
+
+    printf("Enter number of products: ");
+    scanf("%d", &n);
+
+    printf("Enter %d product prices:\n", n);
+    for (int i = 0; i < n; i++)
+        scanf("%f", &price[i]);
+
+    // Bubble Sort
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (price[j] > price[j + 1]) {
+                temp = price[j];
+                price[j] = price[j + 1];
+                price[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nPrices in ascending order:\n");
+    for (int i = 0; i < n; i++)
+        printf("%.2f ", price[i]);
+    printf("\n");
+
+    return 0;
+}
