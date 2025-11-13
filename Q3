@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char line[100];
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+struct Node* createNode(char text[]) {
+    struct Node newNode = (struct Node)malloc(sizeof(struct Node));
+    strcpy(newNode->line, text);
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertLine() {
+    char text[100];
+    printf("Enter text line: ");
+    getchar(); // to clear newline from buffer
+    fgets(text, sizeof(text), stdin);
+    text[strcspn(text, "\n")] = '\0'; // remove newline
+
+    struct Node *newNode = createNode(text);
+
+    if (head == NULL)
+        head = newNode;
+    else {
+        struct Node *temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+    printf("Line inserted successfully.\n");
+}
+
+void deleteLine() {
+    int pos, i = 1;
+    struct Node *temp = head, *prev = NULL;
+
+    if (head == NULL) {
+        printf("No lines to delete.\n");
+        return;
+    }
+
+    printf("Enter line number to delete: ");
+    scanf("%d", &pos);
+
+    if (pos == 1) {
+        head = head->next;
+        free(temp);
+        printf("Line 1 deleted.\n");
+        return;
+    }
+
+    while (temp != NULL && i < pos) {
+        prev = temp;
+        temp = temp->next;
+        i++;
+    }
+
+    if (temp == NULL) {
+        printf("Invalid line number.\n");
+        return;
+    }
+
+    prev->next = temp->next;
+    free(temp);
+    printf("Line %d deleted.\n", pos);
+}
+
+void displayText() {
+    struct Node *temp = head;
+    int i = 1;
+    if (temp == NULL) {
+        printf("No text available.\n");
+        return;
+    }
+    printf("\n--- Text Editor Content ---\n");
+    while (temp != NULL) {
+        printf("%d: %s\n", i++, temp->line);
+        temp = temp->next;
+    }
+}
+
+int main() {
+    int choice;
+    printf("=== Simple Text Editor (Linked List) ===\n");
+    do {
+        printf("\n1. Insert Line\n2. Delete Line\n3. Display Text\n4. Exit\nEnter choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1: insertLine(); break;
+            case 2: deleteLine(); break;
+            case 3: displayText(); break;
+            case 4: printf("Exiting...\n"); break;
+            default: printf("Invalid choice!\n");
+        }
+    } while (choice != 4);
+    return 0;
+}
