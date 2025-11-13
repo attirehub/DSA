@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define a node structure
+struct node {
+    char name[50];
+    struct node *left;
+    struct node *right;
+};
+
+// Function to create a new node
+struct node* createNode(char name[]) {
+    struct node* newNode = (struct node*)malloc(sizeof(struct node));
+    strcpy(newNode->name, name);
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new name in the tree
+struct node* insert(struct node* root, char name[]) {
+    if (root == NULL) {
+        root = createNode(name);
+    } else {
+        // Compare strings alphabetically
+        if (strcmp(name, root->name) < 0) {
+            root->left = insert(root->left, name); // smaller name -> left
+        } else if (strcmp(name, root->name) > 0) {
+            root->right = insert(root->right, name); // larger name -> right
+        }
+    }
+    return root;
+}
+
+// In-order traversal (Left → Root → Right)
+void inorder(struct node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%s ", root->name);
+        inorder(root->right);
+    }
+}
+
+// Pre-order traversal (Root → Left → Right)
+void preorder(struct node* root) {
+    if (root != NULL) {
+        printf("%s ", root->name);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Post-order traversal (Left → Right → Root)
+void postorder(struct node* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%s ", root->name);
+    }
+}
+
+// Search for a name in the tree
+struct node* search(struct node* root, char key[]) {
+    if (root == NULL) {
+        return NULL;
+    } else if (strcmp(key, root->name) == 0) {
+        return root;
+    } else if (strcmp(key, root->name) < 0) {
+        return search(root->left, key);
+    } else {
+        return search(root->right, key);
+    }
+}
+
+// Main function
+int main() {
+    struct node* root = NULL;
+    int choice;
+    char name[50];
+    struct node* result;
+
+    printf("Binary Search Tree - Directory of Names\n");
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Add Name\n");
+        printf("2. In-order Traversal\n");
+        printf("3. Pre-order Traversal\n");
+        printf("4. Post-order Traversal\n");
+        printf("5. Search Name\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();  // clear input buffer
+
+        switch(choice) {
+            case 1:
+                printf("Enter name to add: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';  // remove newline
+                root = insert(root, name);
+                printf("'%s' added to directory.\n", name);
+                break;
+
+            case 2:
+                printf("\nIn-order Traversal (Alphabetical Order):\n");
+                inorder(root);
+                printf("\n");
+                break;
+
+            case 3:
+                printf("\nPre-order Traversal:\n");
+                preorder(root);
+                printf("\n");
+                break;
+
+            case 4:
+                printf("\nPost-order Traversal:\n");
+                postorder(root);
+                printf("\n");
+                break;
+
+            case 5:
+                printf("Enter name to search: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                result = search(root, name);
+                if (result != NULL) {
+                    printf("'%s' found in the directory!\n", name);
+                } else {
+                    printf("'%s' not found.\n", name);
+                }
+                break;
+
+            case 6:
+                printf("Exiting program...\n");
+                break;
+
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+
+    } while(choice != 6);
+
+    return 0;
+}
